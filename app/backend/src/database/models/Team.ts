@@ -29,7 +29,7 @@ Team.init(
     tableName: 'teams',
     underscored: true,
     timestamps: false,
-  }
+  },
 );
 
 export default Team;
