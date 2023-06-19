@@ -4,19 +4,23 @@ import ModelsUsers from '../database/models/Users';
 import { generateToken } from '../utils/jwt';
 
 const router = Router();
+const invalidEmailOrPassword = { message: 'Invalid email or password' };
 
 router.post('/', async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) return res.status(400).json({ message: 'All fields must be filled' });
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email) || password.length < 6) {
+    return res.status(401).json(invalidEmailOrPassword);
+  }
+
   try {
     const user = await ModelsUsers.findOne({ where: { email } });
-
-    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
-
-    if (!bcrypt.compareSync(password, user.password)) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    //     console.log(user?.dataValues.password);
+    if (!user || !bcrypt.compareSync(password, user.dataValues.password)) {
+      return res.status(401).json(invalidEmailOrPassword);
     }
 
     const token = generateToken({ email: user.email, role: user.role });
