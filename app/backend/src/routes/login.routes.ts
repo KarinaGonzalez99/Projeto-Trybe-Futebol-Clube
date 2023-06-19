@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
 import ModelsUsers from '../database/models/Users';
+import { generateToken } from '../utils/jwt';
 
 const router = Router();
 
@@ -19,7 +19,7 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ id: user.id, role: user.role }, 'secret-key');
+    const token = generateToken({ email: user.email, role: user.role });
     return res.status(200).json({ token });
   } catch (error) {
     console.error(error);
