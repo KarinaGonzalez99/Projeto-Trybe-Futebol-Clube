@@ -29,6 +29,6 @@ module.exports = {
   },
 
   down: async (queryInterface: QueryInterface) => {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('users'); // nome correto da table
   }
 };
