@@ -9,25 +9,30 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true,
       },
-      home_team_id: {
+      homeTeamId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        field: 'home_team_id',
       },
-      home_team_goals: {
+      homeTeamGoals: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        field: 'home_team_goals',
       },
-      away_team_id: {
+      awayTeamId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        field: 'away_team_id',
       },
-      away_team_goals: {
+      awayTeamGoals: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        field: 'away_team_goals',
       },
-      in_progress: {
+      inProgress: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
+        field: 'in_progress',
       },
     });
   },

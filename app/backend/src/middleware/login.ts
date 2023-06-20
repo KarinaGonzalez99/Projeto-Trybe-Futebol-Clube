@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-// import * as jwt from 'jsonwebtoken';
 import { tokenValidation } from '../utils/jwt';
 
 export interface AuthenticatedRequest extends Request {
