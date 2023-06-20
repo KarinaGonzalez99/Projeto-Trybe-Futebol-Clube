@@ -72,4 +72,27 @@ router.patch('/:id', validateToken, async (req: AuthenticatedRequest, res: Respo
   }
 });
 
+router.post('/', validateToken, async (req: AuthenticatedRequest, res: Response) => {
+  const { homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals } = req.body;
+
+  try {
+    if (!homeTeamId || !awayTeamId || !homeTeamGoals || !awayTeamGoals) {
+      return res.status(400).json({ message: 'Invalid request. Missing required fields' });
+    }
+    const match = await Match.create({
+      id: 0,
+      homeTeamId,
+      awayTeamId,
+      homeTeamGoals,
+      awayTeamGoals,
+      inProgress: true,
+    });
+
+    return res.status(201).json(match);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json(internal);
+  }
+});
+
 export default router;
