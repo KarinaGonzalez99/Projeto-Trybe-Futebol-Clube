@@ -18,13 +18,7 @@ const generateToken = (payload: JwtPayload) => {
   return token;
 };
 
-const tokenValidation = (token: string) => {
-  try {
-    return jwt.verify(token, key);
-  } catch (error) {
-    return error;
-  }
-};
+const tokenValidation = (token: string) => jwt.verify(token, key);
 
 export {
   generateToken,
