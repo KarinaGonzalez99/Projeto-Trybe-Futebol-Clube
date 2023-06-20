@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import * as bcrypt from 'bcrypt';
+import * as bcryptjs from 'bcryptjs';
 import ModelsUsers from '../database/models/Users';
 import { generateToken } from '../utils/jwt';
 import validateToken, { AuthenticatedRequest } from '../middleware/login';
@@ -20,7 +20,7 @@ router.post('/', async (req: Request, res: Response) => {
   try {
     const user = await ModelsUsers.findOne({ where: { email } });
 
-    if (!user || !bcrypt.compareSync(password, user.dataValues.password)) {
+    if (!user || !bcryptjs.compareSync(password, user.dataValues.password)) {
       return res.status(401).json(invalidEmailOrPassword);
     }
 
