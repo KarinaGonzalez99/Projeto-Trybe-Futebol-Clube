@@ -17,7 +17,7 @@ describe('Teams', () => {
       .stub(TeamModel, "findAll")
       .resolves(teams as any);
       const { body, status } = await chai.request(app).get('/teams');
-      expect(status).to.be.eq(200);
+      expect(status).to.be.eq(200);''
       expect(body).to.be.deep.eq(teams);
   });
   it('', async () => {
