@@ -79,53 +79,46 @@ const contra = (team: Team, matches: Match[]) => matches.reduce((goalsAgainst, m
   return goalsAgainst;
 }, 0);
 
+const createLeaderboardItem = (team: Team, teamMatches: Match[]) => {
+  const totalPoints = total(team, teamMatches); const totalGames = games(team, teamMatches);
+  const totalVictories = vitorias(team, teamMatches); const totalDraws = empate(team, teamMatches);
+  const totalLosses = perdas(team, teamMatches); const goalsFavor = afavor(team, teamMatches);
+  const goalsOwn = contra(team, teamMatches);
+  const goalsBalance = goalsFavor - goalsOwn;
+  const efficiency = ((totalPoints / (totalGames * 3)) * 100).toFixed(2);
+
+  return {
+    name: team.teamName,
+    totalPoints,
+    totalGames,
+    totalVictories,
+    totalDraws,
+    totalLosses,
+    goalsFavor,
+    goalsOwn,
+    goalsBalance,
+    efficiency,
+  };
+};
+
 const homeleaderboard = (matches: Match[]) => {
   const teams = new Set(matches.map((match) => match.homeTeamId));
   const leaderboard = Array.from(teams).map((teamId) => {
     const teamMatches = matches.filter((match) => match.homeTeamId === teamId);
     const team = teamMatches[0].homeTeam;
-    const totalPoints = total(team, teamMatches);
-    const totalGames = games(team, teamMatches);
-    const totalVictories = vitorias(team, teamMatches);
-    const totalDraws = empate(team, teamMatches);
-    const totalLosses = perdas(team, teamMatches);
-    const goalsFavor = afavor(team, teamMatches);
-    const goalsOwn = contra(team, teamMatches);
-    const goalsBalance = goalsFavor - goalsOwn;
-    const efficiency = ((totalPoints / (totalGames * 3)) * 100).toFixed(2);
-    return {
-      name: team.teamName,
-      totalPoints,
-      totalGames,
-      totalVictories,
-      totalDraws,
-      totalLosses,
-      goalsFavor,
-      goalsOwn,
-      goalsBalance,
-      efficiency,
-    };
+    return createLeaderboardItem(team, teamMatches);
   });
 
   leaderboard.sort((a, b) => {
-    if (a.totalPoints !== b.totalPoints) {
-      return b.totalPoints - a.totalPoints;
-    }
-    if (a.totalVictories !== b.totalVictories) {
-      return b.totalVictories - a.totalVictories;
-    }
-    if (a.goalsBalance !== b.goalsBalance) {
-      return b.goalsBalance - a.goalsBalance;
-    }
-    if (a.goalsFavor !== b.goalsFavor) {
-      return b.goalsFavor - a.goalsFavor;
-    }
+    if (a.totalPoints !== b.totalPoints) return b.totalPoints - a.totalPoints;
+    if (a.totalVictories !== b.totalVictories) return b.totalVictories - a.totalVictories;
+    if (a.goalsBalance !== b.goalsBalance) return b.goalsBalance - a.goalsBalance;
+    if (a.goalsFavor !== b.goalsFavor) return b.goalsFavor - a.goalsFavor;
     return 0;
   });
 
   return leaderboard;
 };
-
 
 const getHomeLeaderboard = async (req: Request, res: Response) => {
   try {
@@ -133,11 +126,63 @@ const getHomeLeaderboard = async (req: Request, res: Response) => {
       where: { inProgress: false },
       include: [{ model: Team, as: 'homeTeam' }],
     });
-    //     console.log(homeleaderboard(matches));
+
     return res.status(200).json(homeleaderboard(matches));
   } catch (error) {
-    console.error(error); return res.status(500).json({ message: 'Internal server error' });
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+// const homeleaderboard = (matches: Match[]) => {
+//   const teams = new Set(matches.map((match) => match.homeTeamId));
+//   const leaderboard = Array.from(teams).map((teamId) => {
+//     const teamMatches = matches.filter((match) => match.homeTeamId === teamId);
+//     const team = teamMatches[0].homeTeam;
+//     const totalPoints = total(team, teamMatches);
+//     const totalGames = games(team, teamMatches);
+//     const totalVictories = vitorias(team, teamMatches);
+//     const totalDraws = empate(team, teamMatches);
+//     const totalLosses = perdas(team, teamMatches);
+//     const goalsFavor = afavor(team, teamMatches);
+//     const goalsOwn = contra(team, teamMatches);
+//     const goalsBalance = goalsFavor - goalsOwn;
+//     const efficiency = ((totalPoints / (totalGames * 3)) * 100).toFixed(2);
+//     return {
+//       name: team.teamName,
+//       totalPoints,
+//       totalGames,
+//       totalVictories,
+//       totalDraws,
+//       totalLosses,
+//       goalsFavor,
+//       goalsOwn,
+//       goalsBalance,
+//       efficiency,
+//     };
+//   });
+
+//   leaderboard.sort((a, b) => {
+//     if (a.totalPoints !== b.totalPoints) return b.totalPoints - a.totalPoints;
+//     if (a.totalVictories !== b.totalVictories) return b.totalVictories - a.totalVictories;
+//     if (a.goalsBalance !== b.goalsBalance) return b.goalsBalance - a.goalsBalance;
+//     if (a.goalsFavor !== b.goalsFavor) return b.goalsFavor - a.goalsFavor;
+//     return 0;
+//   });
+//   return leaderboard;
+// };
+
+// const getHomeLeaderboard = async (req: Request, res: Response) => {
+//   try {
+//     const matches = await Match.findAll({
+//       where: { inProgress: false },
+//       include: [{ model: Team, as: 'homeTeam' }],
+//     });
+//     //     console.log(homeleaderboard(matches));
+//     return res.status(200).json(homeleaderboard(matches));
+//   } catch (error) {
+//     console.error(error); return res.status(500).json({ message: 'Internal server error' });
+//   }
+// };
 
 export default getHomeLeaderboard;
