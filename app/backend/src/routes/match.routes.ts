@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express';
 import Team from '../database/models/Team';
 import Match from '../database/models/Matches';
 
-import validateToken, { AuthenticatedRequest } from '../middleware/match';
+import validateToken, { AuthenticatedRequest } from '../middleware/login';
 
 const router = Router();
 const internal = { message: 'Internal server error' };
